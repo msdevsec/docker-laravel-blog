@@ -1,17 +1,17 @@
 # MSDevSec Blog
 
-A Laravel-based blog with Docker setup for easy deployment.
+Docker-powered Laravel blog for documenting tech journey.
 
-## Setup Instructions
+## Quick Start
 
 1. Clone the repository:
+
 ```bash
 git clone https://github.com/yourusername/msdevsec-blog.git
 cd msdevsec-blog
-
-Copy environment files:
+Copy environment file:
 cp src/.env.example src/.env
-Start Docker containers:
+Start Docker:
 cd docker-msdevsec-blog
 docker-compose up -d
 Install dependencies:
@@ -20,6 +20,17 @@ docker-compose exec app npm install
 Set up Laravel:
 docker-compose exec app php artisan key:generate
 docker-compose exec app php artisan migrate
-Access the site:
+docker-compose exec app npm run dev
+Access
 Blog: http://localhost:8000
-Admin: http://localhost:8000/admin
+Features
+Docker containerized
+Laravel 11
+MySQL database
+Redis caching
+Nginx web server
+Development
+Built with PHP 8.2
+Node.js for asset compilation
+TailwindCSS for styling
+```
