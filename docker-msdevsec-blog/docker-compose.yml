@@ -1,0 +1,72 @@
+# Define services that make up the application
+services:
+  # PHP Application Service
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: msdevsec_app
+    restart: unless-stopped
+    working_dir: /var/www
+    volumes:
+      - ../src:/var/www:cached    # Mount Laravel code
+      - ./php.ini:/usr/local/etc/php/conf.d/local.ini:ro    # Custom PHP config
+    networks:
+      - msdevsec_network
+    depends_on:
+      - db
+      - redis
+
+  # Nginx Web Server
+  nginx:
+    image: nginx:alpine
+    container_name: msdevsec_nginx
+    restart: unless-stopped
+    ports:
+      - "8000:80"    # Map host port 8000 to container port 80
+    volumes:
+      - ../src:/var/www:cached    # Mount Laravel code
+      - ./nginx:/etc/nginx/conf.d:ro    # Mount Nginx config
+    networks:
+      - msdevsec_network
+
+  # MySQL Database
+  db:
+    image: mysql:8.0
+    container_name: msdevsec_db
+    restart: unless-stopped
+    environment:
+      MYSQL_DATABASE: msdevsec
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_PASSWORD: secret
+      MYSQL_USER: msdevsec
+    volumes:
+      - dbdata:/var/lib/mysql    # Persist database data
+    ports:
+      - "3306:3306"
+    networks:
+      - msdevsec_network
+
+  # Redis Cache
+  redis:
+    image: redis:alpine
+    container_name: msdevsec_redis
+    restart: unless-stopped
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata:/data    # Persist Redis data
+    networks:
+      - msdevsec_network
+
+# Define networks
+networks:
+  msdevsec_network:
+    driver: bridge
+
+# Define volumes
+volumes:
+  dbdata:
+    driver: local
+  redisdata:
+    driver: local
